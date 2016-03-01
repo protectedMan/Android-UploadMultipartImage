@@ -27,60 +27,15 @@ import com.opensymphony.xwork2.ActionSupport;
 
 
 @Controller
-public class GetToken extends  ActionSupport {
+public class UploadFile extends  ActionSupport {
 	
 /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//	private String userID;
-//	private String username;
-//	public String getUserID() {
-//		return userID;
-//	}
-//
-//	public void setUserID(String userID) {
-//		this.userID = userID;
-//	}
-//
-//	public String getUsername() {
-//		return username;
-//	}
-//
-//	public void setUsername(String username) {
-//		this.username = username;
-//	}
-//
-//
-//
-//	@Action("/getToken")
-//	public void login()  {
-//		HttpServletResponse response = ServletActionContext.getResponse();
-//		String key = "mgb7ka1nb0vrg";
-//		String secret = "wPOOei4SHB2";
-//
-//		SdkHttpResult result = null;
-//		try {
-//			result = ApiHttpClient.getToken(key, secret, userID, username,
-//					"http://aa.com/a.png", FormatType.json);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		String c = result.getResult();
-//		try {
-//			response.setContentType("text/json");
-//			response.setCharacterEncoding("UTF-8");
-//			response.getWriter().write(c);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//		 System.out.println("查询任务输出：  " + c);
-//	}
-//	
-//	
-	private File[] file;
-	private String description;
+
+	private File[] file;//文件数组
+	private String description;//说说内容
 	public File[] getFile() {
 		return file;
 	}
@@ -96,9 +51,9 @@ public class GetToken extends  ActionSupport {
 		this.description = description;
 	}
 	@Action("/upload")
-	public void login()  {
-		System.out.println("------"+Arrays.toString(file));
-		System.out.println("------"+description);
+	public void upload()  {
+		System.out.println("上传的文件="+Arrays.toString(file));
+		System.out.println("说说内容="+description);
 	}
 	
 	
