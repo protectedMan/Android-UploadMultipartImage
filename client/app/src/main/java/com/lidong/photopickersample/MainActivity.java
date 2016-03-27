@@ -173,13 +173,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d("", "position:"+position+"  mMaxPosition:"+mMaxPosition);
 
             if (position==mMaxPosition-1) {
-//                holder.image.setTag("default");
-                holder.image.setImageResource(R.mipmap.ic_launcher);
-                holder.image.setVisibility(View.VISIBLE);
-                if(position==6&&mMaxPosition==7){
-                    holder.image.setImageResource(R.mipmap.ic_launcher);
-                    holder.image.setVisibility(View.GONE);
-                }
+                    if(position==6&&mMaxPosition==7){
+                        holder.image.setImageResource(R.mipmap.ic_launcher);
+                        holder.image.setVisibility(View.GONE);
+                    }else {
+                        holder.image.setImageResource(R.mipmap.ic_launcher);
+                        holder.image.setVisibility(View.VISIBLE);
+                    }
              }  else {
                 final String path=listUrls.get(position);
                 Glide.with(MainActivity.this)
