@@ -24,8 +24,8 @@ import com.lidong.photopicker.intent.PhotoPreviewIntent;
 
 import org.json.JSONArray;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @
@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageCaptureManager captureManager; // 相机拍照处理类
 
     private GridView gridView;
-    private int columnWidth;
     private GridAdapter gridAdapter;
     private Button mButton;
     private String depp;
     private EditText textView;
+    private String TAG =MainActivity1.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +62,23 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (position == gridAdapter.getMaxPosition() - 1) {
-                    PhotoPickerIntent intent = new PhotoPickerIntent(MainActivity.this);
+                String imgs = (String) parent.getItemAtPosition(position);
+                if ("000000".equals(imgs) ){
+                    PhotoPickerIntent intent = new PhotoPickerIntent(MainActivity1.this);
                     intent.setSelectModel(SelectModel.MULTI);
                     intent.setShowCarema(true); // 是否显示拍照
-                    intent.setMaxTotal(6); // 最多选择照片数量，默认为9
+                    intent.setMaxTotal(6); // 最多选择照片数量，默认为6
                     intent.setSelectedPaths(imagePaths); // 已选中的照片地址， 用于回显选中状态
                     startActivityForResult(intent, REQUEST_CAMERA_CODE);
                 }else{
-                        PhotoPreviewIntent intent = new PhotoPreviewIntent(MainActivity.this);
+                        PhotoPreviewIntent intent = new PhotoPreviewIntent(MainActivity1.this);
                         intent.setCurrentItem(position);
                         intent.setPhotoPaths(imagePaths);
                         startActivityForResult(intent, REQUEST_PREVIEW_CODE);
                 }
             }
         });
+        imagePaths.add("000000");
         gridAdapter = new GridAdapter(imagePaths);
         gridView.setAdapter(gridAdapter);
 
@@ -103,50 +104,52 @@ public class MainActivity extends AppCompatActivity {
             switch (requestCode) {
                 // 选择照片
                 case REQUEST_CAMERA_CODE:
-                    loadAdpater(data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT));
+                    ArrayList<String> list = data.getStringArrayListExtra(PhotoPickerActivity.EXTRA_RESULT);
+                    Log.d(TAG, "list: " + "list = [" + list.size());
+                    loadAdpater(list);
                     break;
                 // 预览
                 case REQUEST_PREVIEW_CODE:
-                    loadAdpater(data.getStringArrayListExtra(PhotoPreviewActivity.EXTRA_RESULT));
+                    ArrayList<String> ListExtra = data.getStringArrayListExtra(PhotoPreviewActivity.EXTRA_RESULT);
+                    Log.d(TAG, "ListExtra: " + "ListExtra = [" + ListExtra.size());
+                    loadAdpater(ListExtra);
                     break;
             }
         }
     }
 
     private void loadAdpater(ArrayList<String> paths){
-        if(imagePaths == null){
-            imagePaths = new ArrayList<>();
+        if (imagePaths!=null&& imagePaths.size()>0){
+            imagePaths.clear();
         }
-        imagePaths.clear();
+        if (paths.contains("000000")){
+            paths.remove("000000");
+        }
+        paths.add("000000");
         imagePaths.addAll(paths);
+        gridAdapter  = new GridAdapter(imagePaths);
+        gridView.setAdapter(gridAdapter);
         try{
             JSONArray obj = new JSONArray(imagePaths);
             Log.e("--", obj.toString());
         }catch (Exception e){
             e.printStackTrace();
         }
-        gridAdapter.notifyDataSetChanged();
     }
 
     private class GridAdapter extends BaseAdapter{
         private ArrayList<String> listUrls;
-        private int mMaxPosition;
         private LayoutInflater inflater;
         public GridAdapter(ArrayList<String> listUrls) {
             this.listUrls = listUrls;
-            inflater = LayoutInflater.from(MainActivity.this);
+            if(listUrls.size() == 7){
+                listUrls.remove(listUrls.size()-1);
+            }
+            inflater = LayoutInflater.from(MainActivity1.this);
         }
 
-        public int getCount() {
-            if (listUrls.size() == 9) {
-                mMaxPosition = listUrls.size()+1;
-            } else {
-                 mMaxPosition = listUrls.size()+1;
-            }
-            return mMaxPosition;
-        }
-        public int getMaxPosition(){
-            return mMaxPosition;
+        public int getCount(){
+            return  listUrls.size();
         }
         @Override
         public String getItem(int position) {
@@ -163,35 +166,25 @@ public class MainActivity extends AppCompatActivity {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-
                 convertView = inflater.inflate(R.layout.item_image, parent,false);
                 holder.image = (ImageView) convertView.findViewById(R.id.imageView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder)convertView.getTag();
             }
-            Log.d("", "position:"+position+"  mMaxPosition:"+mMaxPosition);
 
-            if (position==mMaxPosition-1) {
-                    if(position==6&&mMaxPosition==7){
-                        holder.image.setImageResource(R.mipmap.ic_launcher);
-                        holder.image.setVisibility(View.GONE);
-                    }else {
-                        holder.image.setImageResource(R.mipmap.ic_launcher);
-                        holder.image.setVisibility(View.VISIBLE);
-                    }
-             }  else {
-                final String path=listUrls.get(position);
-                Glide.with(MainActivity.this)
-                        .load(new File(path))
+            final String path=listUrls.get(position);
+            if (path.equals("000000")){
+                holder.image.setImageResource(R.mipmap.ic_launcher);
+            }else {
+                Glide.with(MainActivity1.this)
+                        .load(path)
                         .placeholder(R.mipmap.default_error)
                         .error(R.mipmap.default_error)
                         .centerCrop()
                         .crossFade()
                         .into(holder.image);
             }
-
-
             return convertView;
         }
         public class ViewHolder {
