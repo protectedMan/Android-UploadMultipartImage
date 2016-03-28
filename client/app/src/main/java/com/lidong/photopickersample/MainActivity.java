@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mButton;
     private String depp;
     private EditText textView;
-    private String TAG =MainActivity1.class.getSimpleName();
+    private String TAG =MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String imgs = (String) parent.getItemAtPosition(position);
                 if ("000000".equals(imgs) ){
-                    PhotoPickerIntent intent = new PhotoPickerIntent(MainActivity1.this);
+                    PhotoPickerIntent intent = new PhotoPickerIntent(MainActivity.this);
                     intent.setSelectModel(SelectModel.MULTI);
                     intent.setShowCarema(true); // 是否显示拍照
                     intent.setMaxTotal(6); // 最多选择照片数量，默认为6
                     intent.setSelectedPaths(imagePaths); // 已选中的照片地址， 用于回显选中状态
                     startActivityForResult(intent, REQUEST_CAMERA_CODE);
                 }else{
-                        PhotoPreviewIntent intent = new PhotoPreviewIntent(MainActivity1.this);
+                        PhotoPreviewIntent intent = new PhotoPreviewIntent(MainActivity.this);
                         intent.setCurrentItem(position);
                         intent.setPhotoPaths(imagePaths);
                         startActivityForResult(intent, REQUEST_PREVIEW_CODE);
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             if(listUrls.size() == 7){
                 listUrls.remove(listUrls.size()-1);
             }
-            inflater = LayoutInflater.from(MainActivity1.this);
+            inflater = LayoutInflater.from(MainActivity.this);
         }
 
         public int getCount(){
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             if (path.equals("000000")){
                 holder.image.setImageResource(R.mipmap.ic_launcher);
             }else {
-                Glide.with(MainActivity1.this)
+                Glide.with(MainActivity.this)
                         .load(path)
                         .placeholder(R.mipmap.default_error)
                         .error(R.mipmap.default_error)
