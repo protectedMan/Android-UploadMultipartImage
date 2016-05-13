@@ -125,7 +125,7 @@ public class PhotoPickerActivity extends AppCompatActivity{
                     if (i == 0) {
                         if(mode == MODE_MULTI){
                             // 判断选择数量问题
-                            if(mDesireImageCount == resultList.size()){
+                            if(mDesireImageCount == resultList.size()-1){
                                 Toast.makeText(mCxt, R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -379,13 +379,16 @@ public class PhotoPickerActivity extends AppCompatActivity{
      * 刷新操作按钮状态
      */
     private void refreshActionStatus(){
+        if(resultList.contains("000000")){
+            resultList.remove("000000");
+        }
         String text = getString(R.string.done_with_count, resultList.size(), mDesireImageCount);
         menuDoneItem.setTitle(text);
         boolean hasSelected = resultList.size() > 0;
         menuDoneItem.setVisible(hasSelected);
         btnPreview.setEnabled(hasSelected);
         if(hasSelected){
-            btnPreview.setText(getResources().getString(R.string.preview) + "(" + resultList.size() + ")");
+            btnPreview.setText(getResources().getString(R.string.preview) + "(" + (resultList.size()) + ")");
         } else {
             btnPreview.setText(getResources().getString(R.string.preview));
         }
