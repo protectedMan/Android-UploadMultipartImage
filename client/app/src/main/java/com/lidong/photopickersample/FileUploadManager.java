@@ -17,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 
 
 /**
@@ -24,7 +25,7 @@ import retrofit2.http.Part;
  */
 public class FileUploadManager {
 
-    private static final String ENDPOINT = "http://192.168.1.122:8080";
+    private static final String ENDPOINT = "http://192.168.1.21:8080";
     private static String TAG = FileUploadManager.class.getSimpleName();
 
     public interface FileUploadService {
@@ -69,7 +70,7 @@ public class FileUploadManager {
          */
         @Multipart
         @POST("/upload")
-        Call<String> uploadImage(@Part("description") String description,
+        Call<String> uploadImage(@Part("description") String description,@PartMap
                                  Map<String, RequestBody> imgs1);
     }
 
