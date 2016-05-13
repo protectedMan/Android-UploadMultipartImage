@@ -22,8 +22,6 @@ import com.lidong.photopicker.SelectModel;
 import com.lidong.photopicker.intent.PhotoPickerIntent;
 import com.lidong.photopicker.intent.PhotoPreviewIntent;
 
-import org.json.JSONArray;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -80,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         });
         gridAdapter = new GridAdapter(imagePaths);
         gridView.setAdapter(gridAdapter);
-
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,11 +86,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         super.run();
-                        FileUploadManager.upload(imagePaths,depp);
+                        FileUploadManager.uploadMany(imagePaths, depp);
+//                        FileUploadManager.upload(imagePaths,depp);
                     }
                 }.start();
             }
         });
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -118,13 +122,10 @@ public class MainActivity extends AppCompatActivity {
             imagePaths = new ArrayList<>();
         }
         imagePaths.clear();
-        imagePaths.addAll(paths);
-        try{
-            JSONArray obj = new JSONArray(imagePaths);
-            Log.e("--", obj.toString());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+       if (paths!=null && paths.size()>0){
+           imagePaths.addAll(paths);
+           Log.e("--", imagePaths.size() + "");
+       }
         gridAdapter.notifyDataSetChanged();
     }
 
@@ -138,11 +139,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public int getCount() {
-            if (listUrls.size() == 9) {
-                mMaxPosition = listUrls.size()+1;
-            } else {
+//            if (listUrls.size() == 6) {
+//                mMaxPosition = 7;
+//            } else {
                  mMaxPosition = listUrls.size()+1;
-            }
+//            }
             return mMaxPosition;
         }
         public int getMaxPosition(){
@@ -163,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-
                 convertView = inflater.inflate(R.layout.item_image, parent,false);
                 holder.image = (ImageView) convertView.findViewById(R.id.imageView);
                 convertView.setTag(holder);
@@ -173,29 +173,28 @@ public class MainActivity extends AppCompatActivity {
             Log.d("", "position:"+position+"  mMaxPosition:"+mMaxPosition);
 
             if (position==mMaxPosition-1) {
-//                holder.image.setTag("default");
                 holder.image.setImageResource(R.mipmap.ic_launcher);
                 holder.image.setVisibility(View.VISIBLE);
                 if(position==6&&mMaxPosition==7){
                     holder.image.setImageResource(R.mipmap.ic_launcher);
                     holder.image.setVisibility(View.GONE);
                 }
-             }  else {
+             }else {
                 final String path=listUrls.get(position);
-                Glide.with(MainActivity.this)
-                        .load(new File(path))
-                        .placeholder(R.mipmap.default_error)
-                        .error(R.mipmap.default_error)
-                        .centerCrop()
-                        .crossFade()
-                        .into(holder.image);
-            }
+                    Glide.with(MainActivity.this)
+                            .load(new File(path))
+                            .placeholder(R.mipmap.default_error)
+                            .error(R.mipmap.default_error)
+                            .centerCrop()
+                            .crossFade()
+                            .into(holder.image);
+                }
 
 
             return convertView;
         }
-        public class ViewHolder {
-            public ImageView image;
+          class ViewHolder {
+             ImageView image;
         }
     }
 }

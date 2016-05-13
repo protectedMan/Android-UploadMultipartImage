@@ -2,20 +2,22 @@ package com.lidong.photopickersample;
 
 import android.util.Log;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.Multipart;
-import retrofit.http.POST;
-import retrofit.http.Part;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
+
 
 /**
  * Created by lidong on 2016/1/28.
@@ -23,6 +25,7 @@ import retrofit.http.Part;
 public class FileUploadManager {
 
     private static final String ENDPOINT = "http://192.168.1.122:8080";
+    private static String TAG = FileUploadManager.class.getSimpleName();
 
     public interface FileUploadService {
         /**
@@ -57,12 +60,22 @@ public class FileUploadManager {
                                  @Part("file\"; filename=\"image.png\"") RequestBody imgs4,
                                  @Part("file\"; filename=\"image.png\"") RequestBody imgs5,
                                  @Part("file\"; filename=\"image.png\"") RequestBody imgs6);
+
+        /**
+         * 简便写法
+         * @param description
+         * @param imgs1
+         * @return
+         */
+        @Multipart
+        @POST("/upload")
+        Call<String> uploadImage(@Part("description") String description,
+                                 Map<String, RequestBody> imgs1);
     }
 
     private static final Retrofit sRetrofit = new Retrofit .Builder()
             .baseUrl(ENDPOINT)
             .addConverterFactory(GsonConverterFactory.create())
-//            .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // 使用RxJava作为回调适配器
             .build();
 
     private static final FileUploadService apiManager = sRetrofit.create(FileUploadService.class);
@@ -84,16 +97,41 @@ public class FileUploadManager {
         Call<String> call = apiManager.uploadImage( desp,requestBody[0],requestBody[1],requestBody[2],requestBody[3],requestBody[4],requestBody[5]);
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Response<String> response, Retrofit retrofit) {
-                Log.v("Upload", response.message());
-                Log.v("Upload", "success");
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
             }
 
             @Override
-            public void onFailure(Throwable t) {
-                Log.e("Upload", t.toString());
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], t = [" + t + "]");
             }
         });
 
+    }
+
+    /**
+     *
+     * @param paths
+     * @param desp
+     */
+    public static void uploadMany(ArrayList<String> paths,String desp){
+        Map<String,RequestBody> photos = new HashMap<>();
+        if (paths.size()>0) {
+            for (int i=0;i<paths.size();i++) {
+                photos.put("photos\"; filename=\"icon.png",  RequestBody.create(MediaType.parse("multipart/form-data"), new File(paths.get(i))));
+            }
+        }
+        Call<String> stringCall = apiManager.uploadImage(desp, photos);
+        stringCall.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], t = [" + t + "]");
+            }
+        });
     }
 }

@@ -34,8 +34,9 @@
         android:layout_height="100dp" />
     <GridView
         android:id="@+id/gridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:horizontalSpacing="@dimen/space_size"
+        android:numColumns="3"
         android:verticalSpacing="@dimen/space_size" />
 </LinearLayout>
