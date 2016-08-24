@@ -119,7 +119,7 @@ public class FileUploadManager {
         Map<String,RequestBody> photos = new HashMap<>();
         if (paths.size()>0) {
             for (int i=0;i<paths.size();i++) {
-                photos.put("photos\"; filename=\"icon.png",  RequestBody.create(MediaType.parse("multipart/form-data"), new File(paths.get(i))));
+                 photos.put("photos"+i+"\"; filename=\"icon.png",  RequestBody.create(MediaType.parse("multipart/form-data"), new File(paths.get(i))));
             }
         }
         Call<String> stringCall = apiManager.uploadImage(desp, photos);
