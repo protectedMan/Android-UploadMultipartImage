@@ -22,6 +22,11 @@ public class PhotoPreviewIntent extends Intent{
      * @param paths
      */
     public void setPhotoPaths(ArrayList<String> paths){
+        for (int i=0;i<paths.size();i++){
+            if (paths.get(i)=="000000"){
+                paths.remove(i);
+            }
+        }
         this.putStringArrayListExtra(PhotoPreviewActivity.EXTRA_PHOTOS, paths);
     }
 
